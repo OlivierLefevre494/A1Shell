@@ -58,7 +58,22 @@ int interpreter(char *command_args[], int args_size) {
         if (args_size != 2)
             return badcommand();
         return print(command_args[1]);
-
+    } else if (strcmp(command_args[0], "echo") == 0) {
+        if (args_size != 2)
+            return badcommand();
+        char firstchar = command_args[1][0];
+        if (firstchar=='$') {
+            char *mvar = mem_get_value(command_args[1]+1);
+            if (strcmp(mvar, "Variable does not exist")==0)
+                printf("\n");
+            else {
+                printf("%s\n", mvar);
+            }
+        } else {
+            printf("%s\n", command_args[1]);   
+        }
+        return 0;
+            
     } else if (strcmp(command_args[0], "source") == 0) {
         if (args_size != 2)
             return badcommand();
