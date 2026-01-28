@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 int MAX_ARGS_SIZE = 3;
 
@@ -16,6 +17,11 @@ int badcommand() {
 
 int badcommand_mkdir() {
     printf("Bad command: my_mkdir\n");
+    return 1;
+}
+
+int badcommand_cd(){  
+    printf("Bad command: my_cd\n");
     return 1;
 }
 
@@ -128,6 +134,18 @@ int interpreter(char *command_args[], int args_size) {
         fp = fopen(command_args[1],"w");
         fclose(fp);
         return 0;
+
+    //my_cd command
+    } else if (strcmp(command_args[0],"my_cd")==0){
+        if (args_size != 2)
+            return badcommand();
+
+        if (chdir(command_args[1]) != 0) {
+            badcommand_cd();
+        }
+
+        return 0;
+        
             
     } else if (strcmp(command_args[0], "source") == 0) {
         if (args_size != 2)
