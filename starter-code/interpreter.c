@@ -4,11 +4,18 @@
 #include "shellmemory.h"
 #include "shell.h"
 #include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 int MAX_ARGS_SIZE = 3;
 
 int badcommand() {
     printf("Unknown Command\n");
+    return 1;
+}
+
+int badcommand_mkdir() {
+    printf("Bad command: my_mkdir\n");
     return 1;
 }
 
@@ -93,6 +100,24 @@ int interpreter(char *command_args[], int args_size) {
 
         closedir(dir);
 
+        return 0;
+    //my_mkdir command
+    } else if(strcmp(command_args[0], "my_mkdir")==0){
+        if (args_size != 2)
+            return badcommand();
+        char firstchar = command_args[1][0];
+        if (firstchar=='$') {
+            char *mvar = mem_get_value(command_args[1]+1);
+            if (strcmp(mvar, "Variable does not exist")==0)
+                badcommand_mkdir();
+            else {
+                //Create directory with name *mvar
+                mkdir(mvar, 0755);
+            }
+        } else {
+            //create directory with name command_args[1]
+            mkdir(command_args[1],0755);
+        }
         return 0;
             
     } else if (strcmp(command_args[0], "source") == 0) {
