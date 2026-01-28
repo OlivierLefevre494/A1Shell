@@ -112,12 +112,21 @@ int interpreter(char *command_args[], int args_size) {
                 badcommand_mkdir();
             else {
                 //Create directory with name *mvar
-                mkdir(mvar, 0755);
+                mkdir(mvar, 0755); // trust it, it compiles
             }
         } else {
             //create directory with name command_args[1]
             mkdir(command_args[1],0755);
         }
+        return 0;
+
+    //my_touch command BE CAREFUL OVERWRITES EXISTING FILE!!!!
+    } else if (strcmp(command_args[0],"my_touch")==0){
+        if (args_size != 2)
+            return badcommand();
+        FILE *fp;
+        fp = fopen(command_args[1],"w");
+        fclose(fp);
         return 0;
             
     } else if (strcmp(command_args[0], "source") == 0) {
