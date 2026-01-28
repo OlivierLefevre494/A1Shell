@@ -3,6 +3,7 @@
 #include <string.h>
 #include "shellmemory.h"
 #include "shell.h"
+#include <dirent.h>
 
 int MAX_ARGS_SIZE = 3;
 
@@ -58,6 +59,7 @@ int interpreter(char *command_args[], int args_size) {
         if (args_size != 2)
             return badcommand();
         return print(command_args[1]);
+    //ECHO command
     } else if (strcmp(command_args[0], "echo") == 0) {
         if (args_size != 2)
             return badcommand();
@@ -72,6 +74,25 @@ int interpreter(char *command_args[], int args_size) {
         } else {
             printf("%s\n", command_args[1]);   
         }
+        return 0;
+    //my_ls command
+    } else if(strcmp(command_args[0], "my_ls") == 0) {
+        if (args_size != 1)
+            return badcommand();
+        DIR *dir;
+        struct dirent *entry;
+        dir = opendir(".");
+        if(dir == NULL) {
+            perror("opendir");
+            return 1;
+        }
+
+        while ((entry = readdir(dir)) != NULL) {
+            printf("%s\n", entry->d_name);
+        }
+
+        closedir(dir);
+
         return 0;
             
     } else if (strcmp(command_args[0], "source") == 0) {
