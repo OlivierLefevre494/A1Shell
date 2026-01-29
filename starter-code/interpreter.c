@@ -146,7 +146,18 @@ int interpreter(char *command_args[], int args_size) {
 
         return 0;
         
-            
+    //run command
+    } else if (strcmp(command_args[0],"run")==0){
+        if (args_size == 1)
+            return badcommand();
+        int pid = fork();
+        char **testing = command_args + 1;
+        if (pid==0)
+            execvp(command_args[1], testing);
+        else {
+            wait(&pid);
+        }
+        return 0; 
     } else if (strcmp(command_args[0], "source") == 0) {
         if (args_size != 2)
             return badcommand();

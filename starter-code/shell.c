@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> 
-//#include <unistd.h>
+#include <unistd.h>
 #include "shell.h"
 #include "interpreter.h"
 #include "shellmemory.h"
@@ -11,7 +11,7 @@ int parseInput(char ui[]);
 // Start of everything
 int main(int argc, char *argv[]) {
     printf("Shell version 1.5 created Dec 2025\n");
-
+    int interactive = isatty(fileno(stdin));
     char prompt = '$';  				// Shell prompt
     char userInput[MAX_USER_INPUT];		// user's input stored here
     int errorCode = 0;					// zero means no error, default
@@ -23,11 +23,15 @@ int main(int argc, char *argv[]) {
     
     //init shell memory
     mem_init();
-    while(1) {							
-        printf("%c ", prompt);
+    while(1) {
+        if (interactive)				
+            printf("%c ", prompt);
         // here you should check the unistd library 
         // so that you can find a way to not display $ in the batch mode
         fgets(userInput, MAX_USER_INPUT-1, stdin);
+        if (!interactive)
+            if (strcmp(userInput, "")==0)
+                exit(0);
         errorCode = parseInput(userInput);
         if (errorCode == -1) exit(99);	// ignore all other errors
         memset(userInput, 0, sizeof(userInput));
