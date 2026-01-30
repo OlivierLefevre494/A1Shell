@@ -25,6 +25,12 @@ int badcommand_cd(){
     return 1;
 }
 
+int cmp(const void *a, const void *b) {
+    const char *s1 = *(const char **)a;
+    const char *s2 = *(const char **)b;
+    return strcmp(s1, s2);
+}
+
 // For source command only
 int badcommandFileDoesNotExist() {
     printf("Bad command: File not found\n");
@@ -88,25 +94,36 @@ int interpreter(char *command_args[], int args_size) {
             printf("%s\n", command_args[1]);   
         }
         return 0;
-    //my_ls command
-    } else if(strcmp(command_args[0], "my_ls") == 0) {
+
+    } else if (strcmp(command_args[0], "my_ls") == 0) {
         if (args_size != 1)
             return badcommand();
+
         DIR *dir;
         struct dirent *entry;
+        char *names[1024];
+        int count = 0;
+
         dir = opendir(".");
-        if(dir == NULL) {
+        if (dir == NULL) {
             perror("opendir");
             return 1;
         }
 
         while ((entry = readdir(dir)) != NULL) {
-            printf("%s\n", entry->d_name);
+            names[count++] = strdup(entry->d_name);
         }
 
         closedir(dir);
 
+        qsort(names, count, sizeof(char *), cmp);
+
+        for (int i = 0; i < count; i++) {
+            printf("%s\n", names[i]);
+            free(names[i]);
+        }
         return 0;
+
     //my_mkdir command
     } else if(strcmp(command_args[0], "my_mkdir")==0){
         if (args_size != 2)
