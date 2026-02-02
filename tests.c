@@ -100,6 +100,7 @@ int main() {
       if (strcmp(actual_output, expected_output) == 0) {
         printf("Test: %s PASS\n", test_name);
       } else {
+        printf("Expected:\n%s\nActual:\n%s\n", expected_output, actual_output);
         printf("Test: %s FAIL\n", test_name);
         // Optional: print diff or details
         // printf("Expected:\n%s\nActual:\n%s\n", expected_output,
